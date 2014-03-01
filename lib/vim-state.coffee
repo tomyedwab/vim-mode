@@ -227,6 +227,7 @@ class VimState
 
     if @editorView.is(".insert-mode")
       @editor.getCursor().moveLeft()
+      @editor.commitTransaction()
 
     @editorView.removeClass('insert-mode visual-mode')
     @editorView.addClass('command-mode')
@@ -245,6 +246,8 @@ class VimState
 
     @editorView.off 'cursor:position-changed', @moveCursorBeforeNewline
 
+    @editor.beginTransaction()
+
   # Private: Used to enable visual mode.
   #
   # type - One of 'characterwise', 'linewise' or 'blockwise'
@@ -253,6 +256,8 @@ class VimState
   activateVisualMode: (type) ->
     @mode = 'visual'
     @submode = type
+    if @editorView.is(".insert-mode")
+      @editor.commitTransaction()
     @editorView.removeClass('command-mode insert-mode')
     @editorView.addClass('visual-mode')
     @editor.off 'cursor:position-changed', @moveCursorBeforeNewline
